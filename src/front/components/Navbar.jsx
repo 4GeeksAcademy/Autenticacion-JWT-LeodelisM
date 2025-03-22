@@ -5,15 +5,16 @@ export const Navbar = () => {
 	return (
 		<nav className="navbar navbar-light bg-light">
 			<div className="container">
-				<Link to="/">
-					<span className="navbar-brand mb-0 h1">React Boilerplate</span>
-				</Link>
-				<div className="ml-auto">
-					<Link to="/demo">
-						<button className="btn btn-primary">Check the Context in action</button>
+				<span className="navbar-brand mb-0 h1">Lista de Tareas</span>
+				<div className="ml-auto d-flex align-items-center">
+					<Link to="/login" className="btn btn-outline-primary me-2">
+						Iniciar Sesión
 					</Link>
+					<Link to="/signup" className="btn btn-outline-success">
+						Registrarse
+					</Link>
+					</div>
 				</div>
-			</div>
 		</nav>
 	);
 };
