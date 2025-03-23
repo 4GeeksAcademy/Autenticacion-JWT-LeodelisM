@@ -1,7 +1,37 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+
+import apiClient from '../api';
 
 export const Signup = () => {
+    const [name, setName] = useState("");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
+    const [error, setError] = useState("");
+
+    const navigate = useNavigate();
+
+    const valid = (email.trim() !== "") && (password.trim() !== "") && (password === confirmPassword);
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        if (!valid)
+            return;
+
+        setError("");
+
+
+        try {
+            const success = await apiClient.sign_up(name, email, password);
+            if (success) {
+                navigate('/login');
+            }
+        } catch (error) {
+            setError("Sign Up Error");
+        }
+    }
 
     return (
         <div className="container mt-5">
@@ -10,7 +40,20 @@ export const Signup = () => {
                     <div className="card">
                         <div className="card-body">
                             <h2 className="text-center mb-4">Crear Cuenta</h2>
-                            <form onSubmit>
+                            <form onSubmit={handleSubmit}>
+                                <div className="mb-3">
+                                    <label htmlFor="name" className="form-label">
+                                        Name
+                                    </label>
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        id="name"
+                                        value={name}
+                                        onChange={(e) => setName(e.target.value)}
+                                        required
+                                    />
+                                </div>
                                 <div className="mb-3">
                                     <label htmlFor="email" className="form-label">
                                         Email
@@ -19,6 +62,8 @@ export const Signup = () => {
                                         type="email"
                                         className="form-control"
                                         id="email"
+                                        value={email}
+                                        onChange={(e) => setEmail(e.target.value)}
                                         required
                                     />
                                 </div>
@@ -31,6 +76,8 @@ export const Signup = () => {
                                         type="password"
                                         className="form-control"
                                         id="password"
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)}
                                         required
                                     />
                                 </div>
@@ -43,12 +90,15 @@ export const Signup = () => {
                                         type="password"
                                         className="form-control"
                                         id="confirmPassword"
+                                        value={confirmPassword}
+                                        onChange={(e) => setConfirmPassword(e.target.value)}
                                         required
                                     />
                                 </div>
                                 <button
                                     type="submit"
-                                    className="btn btn-primary w-100"    
+                                    className="btn btn-primary w-100"
+                                    disabled={!valid}
                                 > Registrarse
                                 </button>
                             </form>

@@ -1,8 +1,6 @@
 import React, { useState } from "react";
 import useGlobalReducer from '../hooks/useGlobalReducer';
 
-console.log("useGlobalReducer:", useGlobalReducer);
-
 
 export const TodoList = () => {
   const {store, dispatch} = useGlobalReducer();
