@@ -1,38 +1,63 @@
-export const initialStore=()=>{
-  return{
-    message: null,
-    todos: [
+export const initialStore = () => {
+  return {
+    tareas: [
       {
-        id: 1,
-        title: "Make the bed",
-        background: null,
-      },
-      {
-        id: 2,
-        title: "Do my homework",
-        background: null,
-      }
-    ]
-  }
-}
+        id: "",
+        texto: "",
+        prioridad: "",
+        completada: false
+      }   
+    ],
+  };
+};
 
 export default function storeReducer(store, action = {}) {
-  switch(action.type){
-    case 'set_hello':
+  switch (action.type) {
+    case "set_hello":
       return {
         ...store,
-        message: action.payload
+        message: action.payload,
       };
-      
-    case 'add_task':
 
-      const { id,  color } = action.payload
+    case "add_tarea":
+      const nuevaTarea = action.payload;
 
       return {
         ...store,
-        todos: store.todos.map((todo) => (todo.id === id ? { ...todo, background: color } : todo))
+        tareas: [...store.tareas, nuevaTarea],
       };
+
+    case "delete_tarea":
+      const idEliminar = action.payload;
+
+      return {
+        ...store,
+        tareas: store.tareas.filter((tarea) => tarea.id !== idEliminar),
+      };
+
+    case "edit_tarea":
+      const tareaEditada = action.payload;
+
+      return {
+        ...store,
+        tareas: store.tareas.map((tarea) =>
+          tarea.id === tareaEditada.id ? tareaEditada : tarea
+        ),
+      };
+
+    case "toggle_estado_tarea":
+      const idToggle = action.payload;
+
+      return {
+        ...store,
+        tareas: store.tareas.map((tarea) =>
+          tarea.id === idToggle
+            ? { ...tarea, completada: !tarea.completada }
+            : tarea
+        ),
+      };
+
     default:
-      throw Error('Unknown action.');
-  }    
+      throw Error("Unknown action.");
+  }
 }

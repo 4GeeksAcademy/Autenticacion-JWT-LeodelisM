@@ -10,7 +10,7 @@ export const Login = () => {
                     <div className="card">
                         <div className="card-body">
                             <h2 className="text-center mb-4">Iniciar Sesión</h2>
-                            <form onSubmit>
+                            <form>
                                 <div className="mb-3">
                                     <label htmlFor="email" className="form-label">
                                         Email
@@ -34,11 +34,12 @@ export const Login = () => {
                                         required
                                     />
                                 </div>
-                                <button
-                                    type="submit"
+                                <Link
+                                    to="/TodoList"
                                     className="btn btn-primary w-100"
-                                >Iniciar Sesion
-                                </button>
+                                >
+                                    Iniciar Sesion
+                                </Link>
                             </form>
                             <div className="mt-3 text-center">
                                 <p>
