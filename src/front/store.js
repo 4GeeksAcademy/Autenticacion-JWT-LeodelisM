@@ -1,3 +1,5 @@
+const TOKEN_KEY = "token";
+
 export const initialStore = () => {
   return {
     tareas: [
@@ -5,14 +7,29 @@ export const initialStore = () => {
         id: "",
         texto: "",
         prioridad: "",
-        completada: false
-      }   
+        completada: false,
+      },
     ],
+    token: localStorage.getItem(TOKEN_KEY),
   };
 };
 
 export default function storeReducer(store, action = {}) {
   switch (action.type) {
+    case "set_token":
+      const token = action.payload;
+      localStorage.setItem(TOKEN_KEY, token);
+
+      return {
+        ...store,
+        token,
+      };
+    case "logout":
+      localStorage.removeItem(TOKEN_KEY);
+      return {
+        ...store,
+        token: "",
+      };
     case "set_hello":
       return {
         ...store,

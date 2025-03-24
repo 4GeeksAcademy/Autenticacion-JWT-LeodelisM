@@ -1,23 +1,38 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 import apiClient from '../api';
+import useGlobalReducer from "../hooks/useGlobalReducer";
 
 export const Login = () => {
-    const [email, setEmail] = useState(null);
-    const [password, setPassword] = useState(null);
+    const { store, dispatch } = useGlobalReducer();
+
+    const navigate = useNavigate();
+
+    if (store.token) {
+        navigate("/tasks");
+    }
+
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [error, setError] = useState(null);
 
     const valid = email !== "" && password !== "";
 
-    const navigate = useNavigate()
 
-    const handleSubmit = async () => {
+    const handleSubmit = async (e) => {
+        e.preventDefault();
         try {
-            const success = await apiClient.login(email, password);
-            if (success) {
+            const token = await apiClient.login(email, password);
+            if (token) {
+                dispatch({
+                    type: "set_token",
+                    payload: token
+                })
                 navigate('/tasks');
             }
-        } catch {
+        } catch (err) {
+            console.error("Log In Error", err);
             setError("Log In Error");
         }
     }
@@ -29,6 +44,7 @@ export const Login = () => {
                     <div className="card">
                         <div className="card-body">
                             <h2 className="text-center mb-4">Iniciar Sesión</h2>
+                            {error ? <div clasName="bg-danger">{error}</div> : null}
                             <form onSubmit={handleSubmit}>
                                 <div className="mb-3">
                                     <label htmlFor="email" className="form-label">
@@ -77,9 +93,3 @@ export const Login = () => {
         </div>
     );
 };
-
-
-
-
-
-

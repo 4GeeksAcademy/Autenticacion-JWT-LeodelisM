@@ -9,7 +9,8 @@ import { Layout } from "./pages/Layout";
 import { Home } from "./pages/Home";
 import { Login } from "./pages/Login";
 import { Signup } from "./pages/Signup";
-import { TodoList } from "./pages/Task";
+import { Task } from "./pages/Task";
+import { ProtectedRoute } from "./components/ProtectedRoute";
 
 import { Single } from "./pages/Single";
 import { Demo } from "./pages/Demo";
@@ -29,10 +30,17 @@ export const router = createBrowserRouter(
       <Route path="/" element={<Home />} />
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
-      <Route path="/TodoList" element={<TodoList />} />
+
 
       <Route path="/single/:theId" element={<Single />} />  {/* Dynamic route for single items */}
       <Route path="/demo" element={<Demo />} />
+
+      {/* Rutas protegidas */}
+      <Route path="/tasks" element={
+        <ProtectedRoute>
+          <Task />
+        </ProtectedRoute>
+      } />
     </Route>
   )
 );

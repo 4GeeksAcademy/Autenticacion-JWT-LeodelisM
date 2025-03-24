@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import useGlobalReducer from '../hooks/useGlobalReducer';
 
 
-export const TodoList = () => {
+export const Task = () => {
   const {store, dispatch} = useGlobalReducer();
   const [nuevaTarea, setNuevaTarea] = useState("");
   const [prioridad, setPrioridad] = useState("");

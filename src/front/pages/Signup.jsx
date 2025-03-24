@@ -22,9 +22,8 @@ export const Signup = () => {
 
         setError("");
 
-
         try {
-            const success = await apiClient.sign_up(name, email, password);
+            const success = await apiClient.signUp(name, email, password);
             if (success) {
                 navigate('/login');
             }

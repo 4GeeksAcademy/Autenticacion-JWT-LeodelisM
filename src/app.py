@@ -44,20 +44,14 @@ setup_commands(app)
 app.register_blueprint(api, url_prefix='/api')
 
 
-# 🟢 Configuración del JWT después de inicializar Flask
-# 🟢 Configuración de la clave secreta de JWT (Esto debería estar en archivo .env)
 app.config["JWT_SECRET_KEY"] = "tu-clave-secreta"
-# 🟢 Configuración de la fecha de expiración del token (En este caso 1 hora)
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = datetime.timedelta(hours=1)
-# 🟢 Configuración del formato de tokens (especificar que usaremos Bearer en los headers)
 app.config["JWT_TOKEN_LOCATION"] = ["headers"]
 app.config["JWT_HEADER_NAME"] = "Authorization"
 app.config["JWT_HEADER_TYPE"] = "Bearer"
-# 🟢 Inicialización del gestor JWT
 jwt = JWTManager(app)
 
 # Handle/serialize errors like a JSON object
-
 
 @app.errorhandler(APIException)
 def handle_invalid_usage(error):
