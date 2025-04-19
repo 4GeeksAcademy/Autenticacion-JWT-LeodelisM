@@ -10,15 +10,56 @@ export const Signup = () => {
     const [confirmPassword, setConfirmPassword] = useState("");
     const [error, setError] = useState("");
 
+    // Nuevos estados para errores específicos
+    const [emailError, setEmailError] = useState("");
+    const [passwordError, setPasswordError] = useState("");
+    const [confirmPasswordError, setConfirmPasswordError] = useState("");
+
     const navigate = useNavigate();
 
-    const valid = (email.trim() !== "") && (password.trim() !== "") && (password === confirmPassword);
+    // Función de validación mejorada
+    const validateForm = () => {
+        let isValid = true;
+
+        // Resetear errores
+        setEmailError("");
+        setPasswordError("");
+        setConfirmPasswordError("");
+
+        // Validar email
+        if (!email.trim()) {
+            setEmailError("El email es obligatorio");
+            isValid = false;
+        } else if (!email.endsWith("@gmail.com")) {
+            setEmailError("El email debe ser una cuenta de Gmail");
+            isValid = false;
+        }
+
+        // Validar contraseña
+        if (!password.trim()) {
+            setPasswordError("La contraseña es obligatoria");
+            isValid = false;
+        } else if (password.length < 8) {
+            setPasswordError("La contraseña debe tener al menos 8 caracteres");
+            isValid = false;
+        }
+
+        // Validar confirmación de contraseña
+        if (password !== confirmPassword) {
+            setConfirmPasswordError("Las contraseñas no coinciden");
+            isValid = false;
+        }
+
+        return isValid;
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (!valid)
+        // Usar la nueva función de validación
+        if (!validateForm()) {
             return;
+        }
 
         setError("");
 
@@ -28,7 +69,7 @@ export const Signup = () => {
                 navigate('/login');
             }
         } catch (error) {
-            setError("Sign Up Error");
+            setError("Error al crear la cuenta");
         }
     }
 
@@ -39,10 +80,11 @@ export const Signup = () => {
                     <div className="card">
                         <div className="card-body">
                             <h2 className="text-center mb-4">Crear Cuenta</h2>
+                            {error && <div className="alert alert-danger">{error}</div>}
                             <form onSubmit={handleSubmit}>
                                 <div className="mb-3">
                                     <label htmlFor="name" className="form-label">
-                                        Name
+                                        Nombre
                                     </label>
                                     <input
                                         type="text"
@@ -60,11 +102,13 @@ export const Signup = () => {
                                     <input
                                         type="email"
                                         className="form-control"
+                                        placeholder="ejemplo@gmail.com"
                                         id="email"
                                         value={email}
                                         onChange={(e) => setEmail(e.target.value)}
                                         required
                                     />
+                                    {emailError && <div className="text-danger small mt-1">{emailError}</div>}
                                 </div>
 
                                 <div className="mb-3">
@@ -79,6 +123,8 @@ export const Signup = () => {
                                         onChange={(e) => setPassword(e.target.value)}
                                         required
                                     />
+                                    <small className="text-muted">La contraseña debe tener al menos 8 caracteres</small>
+                                    {passwordError && <div className="text-danger small mt-1">{passwordError}</div>}
                                 </div>
 
                                 <div className="mb-3">
@@ -93,12 +139,13 @@ export const Signup = () => {
                                         onChange={(e) => setConfirmPassword(e.target.value)}
                                         required
                                     />
+                                    {confirmPasswordError && <div className="text-danger small mt-1">{confirmPasswordError}</div>}
                                 </div>
                                 <button
                                     type="submit"
-                                    className="btn btn-primary w-100"
-                                    disabled={!valid}
-                                > Registrarse
+                                    className="btn btn-secondary w-100"
+                                >
+                                    Registrarse
                                 </button>
                             </form>
                             <div className="mt-3 text-center">

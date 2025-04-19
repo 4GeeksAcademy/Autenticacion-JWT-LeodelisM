@@ -6,28 +6,29 @@ import useGlobalReducer from "../hooks/useGlobalReducer";
 
 export const Login = () => {
     const { store, dispatch } = useGlobalReducer();
-
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [error, setError] = useState(null);
     const navigate = useNavigate();
 
     if (store.token) {
         navigate("/tasks");
     }
 
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [error, setError] = useState(null);
-
     const valid = email !== "" && password !== "";
-
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
             const token = await apiClient.login(email, password);
+
             if (token) {
                 dispatch({
                     type: "set_token",
-                    payload: token
+                    payload: {
+                        token: token.token,
+                        user: token.user,
+                    }
                 })
                 navigate('/tasks');
             }
@@ -75,7 +76,7 @@ export const Login = () => {
                                 </div>
                                 <button
                                     type="submit"
-                                    className="btn btn-primary w-100"
+                                    className="btn btn-secondary w-100"
                                     disabled={!valid}
                                 >
                                     Iniciar Sesion

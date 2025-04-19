@@ -7,35 +7,37 @@ export const initialStore = () => {
         id: "",
         texto: "",
         prioridad: "",
-        completada: false,
       },
     ],
     token: localStorage.getItem(TOKEN_KEY),
+    user: "null"
   };
 };
 
 export default function storeReducer(store, action = {}) {
+
   switch (action.type) {
+   
     case "set_token":
-      const token = action.payload;
+      
+      const token = action.payload.token;
+      const user = action.payload.user
       localStorage.setItem(TOKEN_KEY, token);
 
       return {
         ...store,
         token,
+        user
       };
+
     case "logout":
       localStorage.removeItem(TOKEN_KEY);
+     
       return {
         ...store,
         token: "",
       };
-    case "set_hello":
-      return {
-        ...store,
-        message: action.payload,
-      };
-
+    
     case "add_tarea":
       const nuevaTarea = action.payload;
 
@@ -62,16 +64,10 @@ export default function storeReducer(store, action = {}) {
         ),
       };
 
-    case "toggle_estado_tarea":
-      const idToggle = action.payload;
-
+      case "set_hello":
       return {
         ...store,
-        tareas: store.tareas.map((tarea) =>
-          tarea.id === idToggle
-            ? { ...tarea, completada: !tarea.completada }
-            : tarea
-        ),
+        message: action.payload,
       };
 
     default:

@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import useGlobalReducer from '../hooks/useGlobalReducer';
 
-
 export const Task = () => {
   const {store, dispatch} = useGlobalReducer();
   const [nuevaTarea, setNuevaTarea] = useState("");
@@ -54,12 +53,7 @@ export const Task = () => {
     });
   };
 
-  // Función para editar una tarea (esto necesitaría un estado adicional para modo edición)
-  const handleEditar = (id) => {
-    // Por ahora solo alertamos - luego implementaremos la edición
-    alert(`Editar tarea con ID: ${id}`);
-  };
-
+ 
   return (
     <div className="container mt-5">
       <div className="row justify-content-center">

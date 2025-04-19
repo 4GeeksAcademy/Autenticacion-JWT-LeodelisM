@@ -2,7 +2,7 @@ const backendUrl = import.meta.env.VITE_BACKEND_URL || "";
 
 async function login(email, password) {
   try {
-    // Validación básica
+    // Validación
     if (!email || !password) {
       throw new Error("Email y contraseña son requeridos");
     }
@@ -22,10 +22,14 @@ async function login(email, password) {
       throw new Error("La respuesta del servidor no contiene un token");
     }
 
-    return result.token;
+    return {
+      token: result.token,
+      user: result.user,
+    };
+
+    
   } catch (error) {
     console.error("Error durante el inicio de sesión:", error.message);
-    // Reenviar el error para que el componente pueda mostrar el mensaje
     throw error;
   }
 }
