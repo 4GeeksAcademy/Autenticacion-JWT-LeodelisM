@@ -13,7 +13,11 @@ from api.commands import setup_commands
 
 from flask_jwt_extended import JWTManager
 import datetime
+from flask_cors import CORS
 
+app = Flask(__name__)
+# Habilitar CORS para toda la aplicación
+CORS(app)
 # from models import Person
 
 ENV = "development" if os.getenv("FLASK_DEBUG") == "1" else "production"

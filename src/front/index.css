@@ -17,3 +17,7 @@ body {
     border: none;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
+
+.bg-custom {
+    background-color: #E69DB8 !important; /* Color de fondo titulo lista de tareas, en task */
+  }

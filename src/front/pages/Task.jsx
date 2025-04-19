@@ -1,14 +1,47 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import useGlobalReducer from '../hooks/useGlobalReducer';
+import apiClient from '../api';
 
 export const Task = () => {
   const {store, dispatch} = useGlobalReducer();
   const [nuevaTarea, setNuevaTarea] = useState("");
   const [prioridad, setPrioridad] = useState("");
+  const [Loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   
   // Tareas del estado global (store)
-  const tareas = store.tareas || [];
+  const tareas = store.tareas
+ 
+  useEffect(() => {
+    renderTask();
+  }, []);
 
+async function renderTask() {
+    setLoading(true);
+    setError(null);
+
+    try {
+        const taskData = await apiClient.getTasks();
+
+        if (taskData) {
+            dispatch({
+                type: "set_tasks",
+                payload: taskData
+            });
+
+        } else {
+            throw new Error("No se encontraron tareas");
+        }
+
+    } catch (error) {
+        console.log("Error al cargar tareas:", error);
+        setError(error.message || "No se pudieron la lista de tareas");
+        
+    } finally {
+        setLoading(false);
+    }
+}
+  
   // Función para manejar cambios en el input de texto
   const handleTextoChange = (e) => {
     setNuevaTarea(e.target.value);
@@ -20,46 +53,67 @@ export const Task = () => {
   };
 
   // Función para agregar una nueva tarea
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
     // Validación básica
     if (nuevaTarea.trim() === "" || prioridad === "") return;
     
-    // Crear objeto de la nueva tarea
-    const nuevaTareaObj = {
-      id: Date.now().toString(),
-      texto: nuevaTarea,
-      prioridad: prioridad,
-      completada: false
-    };
+    setLoading(true);
+    setError(null);
     
-    // Dispatch de la acción para agregar tarea
-    dispatch({
-      type: 'add_tarea',
-      payload: nuevaTareaObj
-    });
-    
-    // Limpiar el formulario
-    setNuevaTarea("");
-    setPrioridad("");
+    try {
+      // Llamada a la API para crear una tarea
+      const nuevaTareaObj = {
+        description: nuevaTarea,
+        priority: prioridad
+      };
+      
+      const response = await apiClient.createTask(nuevaTareaObj);
+      console.log("Tarea creada:", response); // Para depuración
+      
+      // Actualizar el estado con la nueva tarea
+      dispatch({
+        type: 'add_tarea',
+        payload: response
+      });
+      
+      // Limpiar el formulario
+      setNuevaTarea("");
+      setPrioridad("");
+    } catch (err) {
+      console.error("Error al crear tarea:", err);
+      setError("No se pudo crear la tarea");
+    } finally {
+      setLoading(false);
+    }
   };
+
 
   // Función para eliminar una tarea
-  const handleEliminar = (id) => {
-    dispatch({
-      type: 'delete_tarea',
-      payload: id
-    });
+  const handleEliminar = async (taskId) => {
+    try {
+      // Usamos await para esperar que la petición termine
+      await apiClient.deleteTask(taskId);
+  
+      // Actualizamos el estado con dispatch
+      dispatch({
+        type: "delete_tarea",
+        payload: taskId  // Aquí usamos taskId en lugar de id
+      });
+  
+    } catch (error) {
+      console.log(error);
+    }
   };
 
- 
+
   return (
     <div className="container mt-5">
       <div className="row justify-content-center">
         <div className="col-md-8">
           <div className="card">
-            <div className="card-header bg-primary text-white text-center">
+            <div className="card-header bg-custom text-white text-center">
               <h3>Lista de Tareas</h3>
             </div>
             <div className="card-body">
@@ -92,7 +146,8 @@ export const Task = () => {
                     </select>
                   </div>
                   <div className="col-md-2">
-                    <button type="submit" className="btn btn-primary w-100">Agregar</button>
+                    <button type="submit" 
+                            className="btn btn-secondary w-100">Agregar</button>
                   </div>
                 </div>
               </form>
@@ -104,17 +159,17 @@ export const Task = () => {
                     {tareas.map((tarea) => (
                       <li key={tarea.id} className="list-group-item d-flex justify-content-between align-items-center">
                         <div>
-                          <span>{tarea.texto}</span>
-                          <span className={`badge ${tarea.prioridad === 'importante' ? 'bg-primary' : 
-                                           tarea.prioridad === 'urgente' ? 'bg-danger' : 
-                                           tarea.prioridad === 'programar' ? 'bg-warning' : 
+                          <span>{tarea.description}</span>
+                          <span className={`badge ${tarea.priority === 'importante' ? 'bg-primary' : 
+                                           tarea.priority === 'urgente' ? 'bg-danger' : 
+                                           tarea.priority === 'programar' ? 'bg-warning' : 
                                            'bg-info'} ms-2`}>
-                            {tarea.prioridad}
+                            {tarea.priority}
                           </span>
                         </div>
                         <div>
                           <button 
-                            className="btn btn-primary btn-sm me-2"
+                            className="btn btn btn-info btn-sm me-2"
                             onClick={() => handleEditar(tarea.id)}
                           >
                             Editar

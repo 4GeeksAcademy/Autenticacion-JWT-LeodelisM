@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 import apiClient from '../api';
@@ -9,32 +9,44 @@ export const Login = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
 
-    if (store.token) {
-        navigate("/tasks");
-    }
+    useEffect(() => {
+        if (store.token) {
+            navigate("/tasks");
+        }
+    }, [store.token, navigate]);
 
-    const valid = email !== "" && password !== "";
+    const valid = email.trim() !== "" && password.trim() !== "";
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (!valid) return;
+
+        setError(null);
+        setIsLoading(true);
+
         try {
             const token = await apiClient.login(email, password);
 
             if (token) {
+                console.log("Datos recibidos:", token); 
                 dispatch({
                     type: "set_token",
                     payload: {
                         token: token.token,
                         user: token.user,
                     }
-                })
+                });
                 navigate('/tasks');
             }
+
         } catch (err) {
             console.error("Log In Error", err);
-            setError("Log In Error");
+            setError("Error al iniciar sesión. Verifica tus credenciales.");
+        } finally {
+            setIsLoading(false);
         }
     }
 
@@ -45,7 +57,7 @@ export const Login = () => {
                     <div className="card">
                         <div className="card-body">
                             <h2 className="text-center mb-4">Iniciar Sesión</h2>
-                            {error ? <div clasName="bg-danger">{error}</div> : null}
+                            {error && <div className="alert alert-danger">{error}</div>}
                             <form onSubmit={handleSubmit}>
                                 <div className="mb-3">
                                     <label htmlFor="email" className="form-label">
@@ -77,9 +89,9 @@ export const Login = () => {
                                 <button
                                     type="submit"
                                     className="btn btn-secondary w-100"
-                                    disabled={!valid}
+                                    disabled={!valid || isLoading}
                                 >
-                                    Iniciar Sesion
+                                    {isLoading ? "Cargando..." : "Iniciar Sesión"}
                                 </button>
                             </form>
                             <div className="mt-3 text-center">

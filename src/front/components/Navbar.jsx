@@ -4,16 +4,17 @@ import useGlobalReducer from "../hooks/useGlobalReducer";
 export const Navbar = () => {
 	const { store, dispatch } = useGlobalReducer();
 	const { user, token } = store;
+
 	
 	return (
 		<nav className="navbar navbar-custom">
 			<div className="container">
-			<Link to="/">
-					<span className="navbar-brand ">App Lista de Tareas</span>
+			<Link to="/tasks">
+					<span className="navbar-brand ">WebApp Mi Lista de Tareas</span>
 				</Link>
 				{store.token ? <div>
 					<span className= "m-1">¡Hola, {user?.name || 'Usuario'}!</span>
-					<button onClick={() => dispatch({ type: "logout" })} className="btn btn-outline-danger me-2">
+					<button onClick={() => dispatch({ type: "logout" })} className="btn btn-light me-2">
 						Cerrar Sesión
 					</button>
 				</div> : <div className="ml-auto d-flex align-items-center">

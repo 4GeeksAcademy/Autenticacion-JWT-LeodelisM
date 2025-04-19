@@ -1,46 +1,51 @@
 const TOKEN_KEY = "token";
+const USER_KEY = "user"; 
 
 export const initialStore = () => {
   return {
-    tareas: [
-      {
-        id: "",
-        texto: "",
-        prioridad: "",
-      },
-    ],
+    tareas: [],
     token: localStorage.getItem(TOKEN_KEY),
-    user: "null"
+    user: JSON.parse(localStorage.getItem(USER_KEY)) || null,
   };
 };
+  
 
 export default function storeReducer(store, action = {}) {
 
   switch (action.type) {
    
     case "set_token":
-      
       const token = action.payload.token;
-      const user = action.payload.user
+      const user = action.payload.user; // Asumiendo que recibes el usuario junto con el token
+      
       localStorage.setItem(TOKEN_KEY, token);
+      localStorage.setItem(USER_KEY, JSON.stringify(user)); // Guardar usuario en localStorage
+      
+        return {
+          ...store,
+          token,
+          user,
+        };
 
-      return {
-        ...store,
-        token,
-        user
-      };
-
-    case "logout":
-      localStorage.removeItem(TOKEN_KEY);
-     
-      return {
-        ...store,
-        token: "",
-      };
+      case "logout":
+        localStorage.removeItem(TOKEN_KEY);
+       
+        return {
+          ...store,
+          token: "",
+        };
     
+    case "set_tasks":
+    const tasks = action.payload;
+
+      return {
+        ...store,
+        tareas: tasks
+      }; 
+      
     case "add_tarea":
       const nuevaTarea = action.payload;
-
+    
       return {
         ...store,
         tareas: [...store.tareas, nuevaTarea],

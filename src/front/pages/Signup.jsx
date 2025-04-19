@@ -66,7 +66,7 @@ export const Signup = () => {
         try {
             const success = await apiClient.signUp(name, email, password);
             if (success) {
-                navigate('/login');
+                navigate('/tasks');
             }
         } catch (error) {
             setError("Error al crear la cuenta");
