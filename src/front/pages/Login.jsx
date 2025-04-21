@@ -18,6 +18,9 @@ export const Login = () => {
         }
     }, [store.token, navigate]);
 
+
+    // verificar que tanto el email como la contraseña no estén vacíos 
+    // después de eliminar los espacios en blanco al inicio y final
     const valid = email.trim() !== "" && password.trim() !== "";
 
     const handleSubmit = async (e) => {
@@ -31,7 +34,6 @@ export const Login = () => {
             const token = await apiClient.login(email, password);
 
             if (token) {
-                console.log("Datos recibidos:", token); 
                 dispatch({
                     type: "set_token",
                     payload: {
@@ -43,7 +45,6 @@ export const Login = () => {
             }
 
         } catch (err) {
-            console.error("Log In Error", err);
             setError("Error al iniciar sesión. Verifica tus credenciales.");
         } finally {
             setIsLoading(false);

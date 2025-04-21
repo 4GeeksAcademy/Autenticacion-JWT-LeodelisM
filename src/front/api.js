@@ -54,9 +54,9 @@ async function signUp(name, email, password) {
 }
 
 export default {
+  getToken,
   login,
   signUp,
-  getToken,
   createTask,
   getTasks,
   deleteTask,
@@ -136,7 +136,7 @@ async function deleteTask(taskId) {
     // Obtén el token de autenticación (asumiendo que lo guardas en localStorage)
     const token = localStorage.getItem('token');
     
-    // Realiza la petición DELETE
+    // Realizar la petición 
     const response = await fetch(`https://probable-zebra-5gx5qv9wg9wg349j5-3001.app.github.dev/api/tasks/${taskId}`, {
       method: 'DELETE',
       headers: {

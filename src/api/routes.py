@@ -55,7 +55,7 @@ def handle_signup():
 
     return jsonify("Usuario Creado"), 201
 
-
+# El token se genera, al hacer Login
 @api.route('/auth/login', methods=['POST'])
 def handle_login():
     try:
@@ -74,6 +74,7 @@ def handle_login():
         # Verificar si el usuario existe y la contraseña es correcta
         if user and user.check_password(password):
             # Generar token y devolver datos del usuario
+            # Colocar str delante del valor que va ser identity para que el token sea valido, de lo contrario da error
             token = create_access_token(identity=str(user.id))
             return jsonify({"token":token, "user":user.serialize()}), 200
         else:
@@ -85,8 +86,6 @@ def handle_login():
         return jsonify(error="Error en el servidor"), 500
 
 
-# Esta ruta esta modo lectura, no esta implementada
-# Taks esta funcionando solo localmente
 @api.route('/tasks', methods=['GET'])
 @jwt_required()
 def get_tasks():
@@ -135,8 +134,6 @@ def create_task():
     return jsonify(new_task.serialize_task()), 201
 
 
-
-
 @api.route('/tasks/<int:task_id>', methods=['DELETE'])
 @jwt_required()
 def delete_task(task_id):
@@ -158,47 +155,3 @@ def delete_task(task_id):
         db.session.rollback()
         return jsonify({"msg": "Error al eliminar tarea", "error": str(e)}), 500
     
-@api.route('/tasks/<int:task_id>', methods=['PATCH'])
-@jwt_required()
-def patch_task(task_id):
-    # Obtenemos el ID del usuario actual desde el token JWT
-    current_user_id = get_jwt_identity()
-    
-    # Obtenemos los datos enviados en la petición
-    data = request.get_json()
-    
-    # Verificamos que los datos necesarios estén presentes
-    if not data:
-        return jsonify({"msg": "No se proporcionaron datos para actualizar"}), 400
-    
-    try:
-        # Buscamos la tarea por ID y usuario (para asegurar que pertenece al usuario actual)
-        task = Task.query.filter_by(id=task_id, user_id=current_user_id).first()
-        
-        # Si no se encuentra la tarea
-        if not task:
-            return jsonify({"msg": "Tarea no encontrada o no tienes permiso para modificarla"}), 404
-        
-        # Actualizamos solo los campos que se enviaron en la petición
-        campos_actualizables = ['description', 'priority']
-        for campo in campos_actualizables:
-            if campo in data:
-                # Validación especial para el campo priority
-                if campo == 'priority':
-                    allowed_priorities = ['urgente', 'importante', 'delegar', 'programar']
-                    if data[campo] not in allowed_priorities:
-                        return jsonify({"msg": f"Valor de {campo} no válido"}), 400
-                
-                # Actualizamos el campo
-                setattr(task, campo, data[campo])
-        
-        # Guardamos los cambios en la base de datos
-        db.session.commit()
-        
-        # Devolvemos la tarea actualizada
-        return jsonify({"msg": "Tarea actualizada con éxito", "task": task.serialize_task()}), 200
-        
-    except Exception as e:
-        # Si ocurre algún error, hacemos rollback y devolvemos un mensaje de error
-        db.session.rollback()
-        return jsonify({"msg": "Error al actualizar la tarea", "error": str(e)}), 500

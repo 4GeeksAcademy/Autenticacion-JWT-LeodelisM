@@ -16,7 +16,7 @@ export default function storeReducer(store, action = {}) {
    
     case "set_token":
       const token = action.payload.token;
-      const user = action.payload.user; // Asumiendo que recibes el usuario junto con el token
+      const user = action.payload.user;
       
       localStorage.setItem(TOKEN_KEY, token);
       localStorage.setItem(USER_KEY, JSON.stringify(user)); // Guardar usuario en localStorage

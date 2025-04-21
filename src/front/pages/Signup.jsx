@@ -17,7 +17,7 @@ export const Signup = () => {
 
     const navigate = useNavigate();
 
-    // Función de validación mejorada
+    // Función de validación
     const validateForm = () => {
         let isValid = true;
 
@@ -56,7 +56,7 @@ export const Signup = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // Usar la nueva función de validación
+        // Usar la función de validación
         if (!validateForm()) {
             return;
         }
@@ -66,7 +66,7 @@ export const Signup = () => {
         try {
             const success = await apiClient.signUp(name, email, password);
             if (success) {
-                navigate('/tasks');
+                navigate('/login');
             }
         } catch (error) {
             setError("Error al crear la cuenta");
